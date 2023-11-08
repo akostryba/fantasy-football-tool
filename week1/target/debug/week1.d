@@ -1,1 +1,0 @@
-C:\Users\akostryba\OneDrive\Desktop\School_Work\2023_Q1_Autumn\CSC_363\csc363-20241-kostryba\week1\target\debug\week1.exe: C:\Users\akostryba\OneDrive\Desktop\School_Work\2023_Q1_Autumn\CSC_363\csc363-20241-kostryba\week1\src\main.rs
