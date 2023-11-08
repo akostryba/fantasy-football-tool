@@ -1,0 +1,9 @@
+C:\Users\akostryba\OneDrive\Desktop\School_Work\2023_Q1_Autumn\CSC_363\csc363-20241-kostryba\project\target\debug\deps\socket2-a999f18b17cb8146.rmeta: C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\lib.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockaddr.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\socket.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockref.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sys\windows.rs
+
+C:\Users\akostryba\OneDrive\Desktop\School_Work\2023_Q1_Autumn\CSC_363\csc363-20241-kostryba\project\target\debug\deps\socket2-a999f18b17cb8146.d: C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\lib.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockaddr.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\socket.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockref.rs C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sys\windows.rs
+
+C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\lib.rs:
+C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockaddr.rs:
+C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\socket.rs:
+C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sockref.rs:
+C:\Users\akostryba\.cargo\registry\src\index.crates.io-6f17d22bba15001f\socket2-0.4.10\src\sys\windows.rs:
