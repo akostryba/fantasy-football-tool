@@ -1,34 +1,34 @@
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ScheduleRoot {
     pub status_code: i64,
-    pub body: Vec<ScheduleBody>,
+    pub body: ScheduleBody,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ScheduleBody {
+    pub team: String,
+    pub schedule: Vec<Game>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Game {
     #[serde(rename = "gameID")]
     pub game_id: String,
     pub season_type: String,
     pub away: String,
+    pub game_time: String,
     pub game_date: String,
-    #[serde(rename = "espnID")]
-    pub espn_id: String,
     #[serde(rename = "teamIDHome")]
     pub team_idhome: String,
-    pub game_status: String,
     pub game_week: String,
     #[serde(rename = "teamIDAway")]
     pub team_idaway: String,
     pub home: String,
-    pub espn_link: String,
-    pub cbs_link: String,
-    pub game_time: String,
-    pub season: String,
-    pub neutral_site: bool,
 }
 
 #[derive(Deserialize)]
@@ -91,3 +91,34 @@ pub struct PlayerInjury {
     pub designation: String,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TeamsRoot {
+    pub status_code: i64,
+    pub body: Vec<TeamsBody>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TeamsBody {
+    pub team_abv: String,
+    pub team_city: String,
+    pub current_streak: CurrentStreak,
+    pub loss: String,
+    pub team_name: String,
+    pub nfl_com_logo1: String,
+    #[serde(rename = "teamID")]
+    pub team_id: String,
+    pub tie: String,
+    pub pa: String,
+    pub pf: String,
+    pub espn_logo1: String,
+    pub wins: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CurrentStreak {
+    pub result: String,
+    pub length: String,
+}

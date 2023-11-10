@@ -1,139 +1,146 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Rust Fantasy Football Start/Sit Tool</title>
-    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One" rel="stylesheet">
-    <style>
-      body {
-        background-color: #f2f2f2;
-        margin: 0;
-        padding: 0;
-      }
-      header {
-        font-family: "Alfa Slab One";
-        background-color: #b7410e;
-        color: #fff;
-        text-align: center;
-        padding: 0.1px;
-        letter-spacing: 3px;
-        font-size: 24px;
-      }
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        border-radius: 5px;
-      }
-      form {
-        margin-top: 20px;
-      }
-      label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-      }
-      input[type="text"] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-      #submit {
-        background-color: #833b3b;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      #submit:hover {
-        background-color: #005b92;
-      }
-      h2 {
-        margin-top: 20px;
-        font-size: 24px;
-      }
-      .columns {
-        display: flex;
-        justify-content: space-between;
-      }
-      .column {
-        flex: 1;
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        text-align: center; /* Center the text */
-      }
-      .player-name {
-        font-weight: bold;
-        font-size: 20px; /* Larger font size for player names */
-        margin-bottom: 15px; /* Add more space below player names */
-      }
-      .separator {
-        border-top: 1px solid #ccc;
-        margin: 10px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Rust Fantasy Football Start/Sit Tool</h1>
-    </header>
-    <div class="container">
-      <div>
-        <p>Enter two players below:</p>
-      </div>
-      <div>
-        <form action="/analyze" method="POST">
-          <label for="player1">Player 1:</label>
-          <input name="player1" type="text"><br>
-          <label for="player2">Player 2:</label>
-          <input name="player2" type="text"><br>
-          <label for="week">Select Week:</label>
-          <select name="week" id="week">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            </select><br>
-            <br>
-          <input id="submit" type="submit" value="Submit">
-        </form>
-      </div>
-      {% if player1_proj %}
-      <h2>Week {{week}} Projected Fantasy Points</h2>
-      <div class="columns">
-        <div class="column">
-          <p class="player-name">Player 1 ({{ player1_name }})</p>
-          <div class="separator"></div>
-          <p>{{ player1_proj }} points</p>
-        </div>
-        <div class="column">
-          <p class="player-name">Player 2 ({{ player2_name }})</p>
-          <div class="separator"></div>
-          <p>{{ player2_proj }} points</p>
-        </div>
-      </div>
-      {% endif %}
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Rust Fantasy Football Start/Sit Tool</title>
+  <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      font-family: "Alfa Slab One";
+      background-color: #b7410e;
+      color: #fff;
+      text-align: center;
+      padding: 0.1px;
+      letter-spacing: 3px;
+      font-size: 24px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+    form {
+      margin-top: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #submit {
+      background-color: #833b3b;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #submit:hover {
+      background-color: #b7410e;
+    }
+    h2 {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    .columns {
+      display: flex;
+      justify-content: space-between;
+    }
+    .column {
+      flex: 1;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+    .player-name {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    .separator {
+      border-top: 1px solid #ccc;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rust Fantasy Football Start/Sit Tool</h1>
+  </header>
+  <div class="container">
+    <div>
+      <p>Enter two players below:</p>
     </div>
-  </body>
+    <div>
+      <form action="/analyze" method="POST">
+        <label for="player1">Player 1:</label>
+        <input name="player1" type="text" value="{{default_player1}}"><br>
+        <label for="player2">Player 2:</label>
+        <input name="player2" type="text" value="{{default_player2}}"><br>
+        <label for="week">Select Week:</label>
+        <select name="week" id="week">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10" selected>10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+        </select><br>
+        <br>
+        <label for="scoring">Scoring Format:</label>
+        <select name="scoring" id="scoring">
+          <option value="Standard">Standard</option>
+          <option value="PPR">PPR</option>
+          <option value="Half PPR">Half PPR</option>
+        </select><br><br>
+        <input id="submit" type="submit" value="Analyze">
+      </form>
+    </div>
+    {% if player1_proj %}
+    <h2>Week {{week}} Projected Fantasy Points</h2>
+    <div class="columns">
+      <div class="column">
+        <p class="player-name">Player 1 ({{ player1_name }})</p>
+        <div class="separator"></div>
+        <p>Projected Points: {{ player1_proj }} points</p>
+        <p>Opponent: {{ opponent_1 }}</p> <!-- Added opponent information -->
+      </div>
+      <div class="column">
+        <p class="player-name">Player 2 ({{ player2_name }})</p>
+        <div class="separator"></div>
+        <p>Projected Points: {{ player2_proj }} points</p>
+        <p>Opponent: {{ opponent_2 }}</p> <!-- Added opponent information -->
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</body>
 </html>
