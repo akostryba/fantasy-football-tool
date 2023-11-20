@@ -7,7 +7,8 @@ pub mod query;
 pub use query::{get_standard_projection, get_ppr_projection, get_halfppr_projection, request_fantasy, 
                 request_players, get_player,
                 request_schedule, get_game, get_opp_id,
-                request_teams, get_team};
+                request_teams, get_team, get_allowed_ppg,
+                request_betting, get_over_under, get_spread};
 pub mod my_errors;
 pub use my_errors::{MyError, detect_query_error, handle_error};
 
@@ -105,6 +106,11 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     proj2 = proj2.as_str()[1..proj2.len()-1].to_string();
   }
 
+  println!("Score1 Found: {}, Score2 Found: {}", proj1, proj2);
+  
+  let context_vars: Vec<(String, &String)> = vec![(String::from("Projection 1"), &proj1), (String::from("Projection 2"), &proj2)];
+  detect_query_error(context_vars);
+
   let schedule1 = match request_schedule(&client, &player1.team_id).await {
     Ok(s) => s,
     _ => return Err(Box::new(MyError::RequestError(String::from("Schedule 1 Request")))),
@@ -143,10 +149,45 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     None => return Err(Box::new(MyError::QueryError(String::from("Opp Team 2")))),
   };
 
-  println!("Score1 Found: {}, Score2 Found: {}", proj1, proj2);
-  
-  let context_vars: Vec<(String, &String)> = vec![(String::from("Projection 1"), &proj1), (String::from("Projection 2"), &proj2)];
-  detect_query_error(context_vars);
+  let opp1_appg = get_allowed_ppg(opp1_team);
+  let opp2_appg = get_allowed_ppg(opp2_team);
+
+  let betting_data_1 = match request_betting(&client, &game1.game_id, &game1.game_date).await{
+    Ok(d) => d,
+    _ =>{
+      return Err(Box::new(MyError::RequestError(String::from("Betting Data 1"))));
+    }
+  };
+
+  let betting_data_2 = match request_betting(&client, &game2.game_id, &game2.game_date).await{
+    Ok(d) => d,
+    _ =>{
+      return Err(Box::new(MyError::RequestError(String::from("Betting Data 2"))));
+    }
+  };
+
+  let team1_loc = {
+    if game1.team_idaway == player1.team_id {
+      "away"
+    }
+    else {
+      "home"
+    }
+  };
+
+  let team2_loc = {
+    if game2.team_idaway == player2.team_id {
+      "away"
+    }
+    else {
+      "home"
+    }
+  };
+
+  let game1_spread = get_spread(&betting_data_1, &game1.game_id, team1_loc);
+  let ou_1 = get_over_under(&betting_data_1, &game1.game_id);
+  let game2_spread = get_spread(&betting_data_2, &game2.game_id, team2_loc);
+  let ou_2 = get_over_under(&betting_data_2, &game2.game_id);
   
   //format! ("Player 1 ID: {}. Projected PPR Points: {}\nPlayer 2 ID: {}. Projected PPR Points: {}", player1.player_id, ppr_proj1, player2.player_id, ppr_proj2);
   Ok(Template::render("test2", context! {
@@ -159,6 +200,12 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     week : s.week,
     opponent_1 : &opp1_team.team_name,
     opponent_2 : &opp2_team.team_name,
+    opponent_1_appg : format!("{:.2}",opp1_appg),
+    opponent_2_appg : format!("{:.2}",opp2_appg),
+    game1_spread : game1_spread,
+    over_under_1 : ou_1,
+    game2_spread : game2_spread,
+    over_under_2 : ou_2,
   }))
 }
 

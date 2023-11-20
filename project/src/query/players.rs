@@ -18,14 +18,3 @@ pub fn get_player<'a>(player_vec : &'a Vec<PlayerBody>, target_name : &'a str) -
   return player_vec.iter().find(|player| player.long_name == target_name);
 }
 
-// pub fn get_player<'a>(player_vec : &'a Vec<PlayerBody>, target_name : &'a str) -> &PlayerBody{
-//   let player_option = find_player(player_vec, target_name);
-//   let player = match player_option{
-//     Some(p) => {
-//       return p;
-//     },
-//     None => {
-//       return PlayerBody;
-//       }
-//     };
-// }

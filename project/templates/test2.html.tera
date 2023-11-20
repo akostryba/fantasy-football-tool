@@ -131,13 +131,19 @@
         <p class="player-name">Player 1 ({{ player1_name }})</p>
         <div class="separator"></div>
         <p>Projected Points: {{ player1_proj }} points</p>
-        <p>Opponent: {{ opponent_1 }}</p> <!-- Added opponent information -->
+        <p>Opponent: {{ opponent_1 }}</p> 
+        <p>Opponent Allowed PPG: {{opponent_1_appg}}</p>
+        <p>Over/Under: {{over_under_1}}</p>
+        <p>Spread: {{game1_spread}}</p>
       </div>
       <div class="column">
         <p class="player-name">Player 2 ({{ player2_name }})</p>
         <div class="separator"></div>
         <p>Projected Points: {{ player2_proj }} points</p>
-        <p>Opponent: {{ opponent_2 }}</p> <!-- Added opponent information -->
+        <p>Opponent: {{ opponent_2 }}</p> 
+        <p>Opponent Allowed PPG: {{opponent_2_appg}}</p>
+        <p>Over/Under: {{over_under_2}}</p>
+        <p>Spread: {{game2_spread}}</p>
       </div>
     </div>
     {% endif %}

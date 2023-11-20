@@ -56,7 +56,7 @@ pub fn handle_error(err: &MyError, s : &Form<Input<'_>>) -> Template{
             default_player2 : String::from("Try again later"),
           });
       }
-      MyError::QueryError(_query) =>{
+      MyError::QueryError(query) =>{
           println!("{}", err);
           // Handle QueryError
           return Template::render("test2", context!{
@@ -64,11 +64,17 @@ pub fn handle_error(err: &MyError, s : &Form<Input<'_>>) -> Template{
             default_player2 : s.player2,
             player1_name: String::from(s.player1),
             player2_name: String::from(s.player2),
-            player1_proj : String::from("Missing"),
-            player2_proj : String::from("Missing"),
+            player1_proj : format!("Missing {}", query),
+            player2_proj : format!("Missing {}", query),
             week : s.week,
             opponent_1 : String::from("Data Missing"),
             opponent_2 : String::from("Data Missing"),
+            opponent_1_appg : String::from("Data Missing"),
+            opponent_2_appg : String::from("Data Missing"),
+            game1_spread : String::from("Data Missing"),
+            over_under_1 : String::from("Data Missing"),
+            game2_spread : String::from("Data Missing"),
+            over_under_2 : String::from("Data Missing"),
           });
       }
   }

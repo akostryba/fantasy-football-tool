@@ -2,10 +2,12 @@ pub mod fantasy;
 pub mod players;
 pub mod schedule;
 pub mod teams;
+pub mod betting;
 pub use fantasy::{get_standard_projection, get_ppr_projection, get_halfppr_projection, request_fantasy};
 pub use players::{get_player, request_players};
 pub use schedule::{request_schedule, get_game, get_opp_id};
-pub use teams::{request_teams, get_team};
+pub use teams::{request_teams, get_team, get_allowed_ppg};
+pub use betting::{request_betting, get_over_under, get_spread};
 pub use lazy_static::lazy_static;
 
 lazy_static! {
