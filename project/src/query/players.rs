@@ -3,7 +3,7 @@ use crate::json::my_structs::{PlayerBody, PlayerRoot};
 
 use crate::query::{REQUEST_HOST, PLAYERS, API_KEY};
 
-pub async fn request_players (client : &Client) -> Result<(PlayerRoot), Box<dyn std::error::Error>>{
+pub async fn request_players (client : &Client) -> Result<PlayerRoot, Box<dyn std::error::Error>>{
     let players_request : String = format!("{}{}", *REQUEST_HOST, *PLAYERS);
     let players_response = client.get(players_request)
           .header("X-RapidAPI-Key",

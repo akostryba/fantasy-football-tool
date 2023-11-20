@@ -1,11 +1,6 @@
 use reqwest::Client;
 use rocket::form::Form;
-use rocket::fs::NamedFile;
 use rocket_dyn_templates::{Template,context};
-use std::path::{Path,PathBuf};
-use std::error::Error;
-use std::fmt;
-use std::fmt::{Formatter, Display};
 
 pub mod json;
 pub mod query;
@@ -13,11 +8,11 @@ pub use query::{get_standard_projection, get_ppr_projection, get_halfppr_project
                 request_players, get_player,
                 request_schedule, get_game, get_opp_id,
                 request_teams, get_team};
+pub mod my_errors;
+pub use my_errors::{MyError, detect_query_error, handle_error};
 
 
 pub use json::my_structs;
-use serde::Serialize;
-use serde_json::{Value, json};
 
 fn create_client () -> Client{
   return reqwest::Client::new();
@@ -35,130 +30,11 @@ fn index () -> Template {
 }
 
 #[derive (Debug,FromForm)]
-struct Input<'r> {
-  player1 : &'r str, 
-  player2 : &'r str,
-  week : &'r str,
-  scoring : &'r str,
-}
-
-#[derive(Debug)]
-struct PlayerNotFoundError {
-  player_name: String,
-}
-
-impl Display for PlayerNotFoundError {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write! (f, "Player not found: {}", self.player_name)
-  }
-}
-
-impl Error for PlayerNotFoundError {
-  fn source (&self) -> Option<&(dyn Error + 'static)>{
-    None
-  }
-}
-
-#[derive(Debug)]
-struct RequestError{
-  request_name: String,
-}
-
-impl Display for RequestError {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write! (f, "Error with: {}", self.request_name)
-  }
-}
-
-impl Error for RequestError {
-  fn source (&self) -> Option<&(dyn Error + 'static)>{
-    None
-  }
-}
-
-#[derive(Debug)]
-struct QueryError{
-  query: String,
-}
-
-impl Display for QueryError {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write! (f, "Couldn't find: {}", self.query)
-  }
-}
-
-impl Error for QueryError {
-  fn source (&self) -> Option<&(dyn Error + 'static)>{
-    None
-  }
-}
-
-#[derive(Debug)]
-enum MyError {
-  PlayerNotFoundError(String),
-  RequestError(String),
-  QueryError(String),
-}
-
-impl Display for MyError {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      MyError::PlayerNotFoundError(msg) => write! (f, "Player not found: {}", msg),
-      MyError::RequestError(msg) => write! (f, "Request Error: {}", msg),
-      MyError::QueryError(msg) => write! (f, "Query Error: {}", msg),
-    }
-  }
-}
-
-impl Error for MyError{
-  fn source (&self) -> Option<&(dyn Error + 'static)>{
-    None
-  }
-}
-
-fn detect_query_error(data_vec : Vec<(String, &String)>) {
-  for (key, value) in data_vec{
-    if *value==String::from("null"){
-      let query_error = MyError::QueryError(format!("{}", key));
-      println!("{}", query_error);
-    }
-  }
-}
-
-fn handle_error(err: &MyError, s : &Form<Input<'_>>) -> Template{
-  match err {
-      MyError::PlayerNotFoundError(player_name) => {
-          println!("{}", err);
-          // Handle PlayerNotFoundError
-          return Template::render("test2", context!{
-            default_player1 : format!("Player not found: {}", player_name),
-            default_player2 : format!("Player not found: {}", player_name),
-          });
-      }
-      MyError::RequestError(request_name) => {
-          println!("{}", err);
-          // Handle RequestError
-          return Template::render("test2", context!{
-            default_player1 : String::from("Try again later"),
-            default_player2 : String::from("Try again later"),
-          });
-      }
-      MyError::QueryError(query) =>{
-          println!("{}", err);
-          // Handle QueryError
-          return Template::render("test2", context!{
-            default_player1 : s.player1,
-            default_player2 : s.player2,
-            player1_name: String::from(s.player1),
-            player2_name: String::from(s.player2),
-            player1_proj : String::from("Missing"),
-            player2_proj : String::from("Missing"),
-            week : s.week,
-            opponent_1 : String::from("Data Missing"),
-            opponent_2 : String::from("Data Missing"),
-          });
-      }
-  }
+pub struct Input<'r> {
+  pub player1 : &'r str, 
+  pub player2 : &'r str,
+  pub week : &'r str,
+  pub scoring : &'r str,
 }
 
 #[post ("/analyze", data = "<s>")]
@@ -167,22 +43,6 @@ async fn analyze_route (s : Form<Input<'_>>) -> Template {
     Ok(template) => template,
     Err(err) => {
       return handle_error(&*err, &s);
-      // match &err{
-      // MyError::RequestError(s) => {
-      //   println!("{}", err);
-      //   return Template::render("test2", context! {
-      //     default_player1 : String::from("Try again later"),
-      //     default_player2 : String::from("Try again later"),
-      //     })
-      // }
-      // QueryError => {
-      //   println!("{}", err);
-      //   return Template::render("test2", context! {
-      //     default_player1 : String::from("Try again later"),
-      //     default_player2 : String::from("Try again later"),
-      //     })
-      // }
-      // }
     }
   }
 }

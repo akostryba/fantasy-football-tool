@@ -15,7 +15,7 @@ pub fn get_halfppr_projection<'a> (player_id: &'a String, json : &'a Value) -> &
     return &json["body"]["playerProjections"][player_id]["fantasyPointsDefault"]["halfPPR"];
   }
 
-pub async fn request_fantasy (client: &Client, week: &str) -> Result<(Value), Box<dyn std::error::Error>> {
+pub async fn request_fantasy (client: &Client, week: &str) -> Result<Value, Box<dyn std::error::Error>> {
     let fantasy_param = vec![("week", week)];
     let fantasy_request : String = format!("{}{}", *REQUEST_HOST, *FANTASY);
     let fantasy_response = client.get(fantasy_request)
