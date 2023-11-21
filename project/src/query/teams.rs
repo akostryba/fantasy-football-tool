@@ -22,3 +22,17 @@ pub fn get_allowed_ppg<'a> (team : &'a TeamsBody) -> f32{
     let games_played = team.loss.parse::<f32>().unwrap() + team.wins.parse::<f32>().unwrap() + team.tie.parse::<f32>().unwrap();
     return team.pa.parse::<f32>().unwrap()/games_played;
 }
+
+pub fn get_ppg<'a> (team : &'a TeamsBody) -> f32{
+    let games_played = team.loss.parse::<f32>().unwrap() + team.wins.parse::<f32>().unwrap() + team.tie.parse::<f32>().unwrap();
+    return team.pf.parse::<f32>().unwrap()/games_played;
+}
+
+pub fn home_or_away (away_id : &String, team_id : &String) -> String {
+    if away_id == team_id{
+        String::from("away")
+    }
+    else {
+        String::from("home")
+    }
+}

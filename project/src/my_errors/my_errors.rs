@@ -69,12 +69,16 @@ pub fn handle_error(err: &MyError, s : &Form<Input<'_>>) -> Template{
             week : s.week,
             opponent_1 : String::from("Data Missing"),
             opponent_2 : String::from("Data Missing"),
+            team1_ppg : String::from("Data Missing"),
+            team2_ppg : String::from("Data Missing"),
             opponent_1_appg : String::from("Data Missing"),
             opponent_2_appg : String::from("Data Missing"),
             game1_spread : String::from("Data Missing"),
             over_under_1 : String::from("Data Missing"),
             game2_spread : String::from("Data Missing"),
             over_under_2 : String::from("Data Missing"),
+            team1_points : String::from("Data Missing"),
+            team2_points : String::from("Data Missing"),
           });
       }
   }

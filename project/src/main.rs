@@ -4,11 +4,11 @@ use rocket_dyn_templates::{Template,context};
 
 pub mod json;
 pub mod query;
-pub use query::{get_standard_projection, get_ppr_projection, get_halfppr_projection, request_fantasy, 
+pub use query::{get_projection, request_fantasy, 
                 request_players, get_player,
                 request_schedule, get_game, get_opp_id,
-                request_teams, get_team, get_allowed_ppg,
-                request_betting, get_over_under, get_spread};
+                request_teams, get_team, get_allowed_ppg, get_ppg, home_or_away,
+                request_betting, get_over_under, get_spread, get_implied_points};
 pub mod my_errors;
 pub use my_errors::{MyError, detect_query_error, handle_error};
 
@@ -31,11 +31,11 @@ fn index () -> Template {
 }
 
 #[derive (Debug,FromForm)]
-pub struct Input<'r> {
-  pub player1 : &'r str, 
-  pub player2 : &'r str,
-  pub week : &'r str,
-  pub scoring : &'r str,
+pub struct Input<'a> {
+  pub player1 : &'a str, 
+  pub player2 : &'a str,
+  pub week : &'a str,
+  pub scoring : &'a str,
 }
 
 #[post ("/analyze", data = "<s>")]
@@ -54,7 +54,6 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
   let players = match request_players(&client).await{
     Ok(p) => p,
     _ =>{
-      //return Ok(Template::render ("test2", context! { }));
       return Err(Box::new(MyError::RequestError(String::from("Player Request"))));
     }
   };
@@ -82,29 +81,9 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     }
   };
 
-  let mut proj1 = 
-    match s.scoring{
-    "Standard" => get_standard_projection(&player1.player_id, &fantasy_data).to_string(),
-    "PPR" => get_ppr_projection(&player1.player_id, &fantasy_data).to_string(),
-    "Half PPR" => get_halfppr_projection(&player1.player_id, &fantasy_data).to_string(),
-    _ => String::from("Error"),
-  };
+  let proj1 = get_projection(&player1.player_id, &fantasy_data, s.scoring);
 
-  if proj1 != String::from("null"){
-    proj1 = proj1.as_str()[1..proj1.len()-1].to_string();
-  }
-
-  let mut proj2 = 
-    match s.scoring{
-    "Standard" => get_standard_projection(&player2.player_id, &fantasy_data).to_string(),
-    "PPR" => get_ppr_projection(&player2.player_id, &fantasy_data).to_string(),
-    "Half PPR" => get_halfppr_projection(&player2.player_id, &fantasy_data).to_string(),
-    _ => String::from("Error"),
-  };
-
-  if proj2 != String::from("null"){
-    proj2 = proj2.as_str()[1..proj2.len()-1].to_string();
-  }
+  let proj2 = get_projection(&player2.player_id, &fantasy_data, s.scoring);
 
   println!("Score1 Found: {}, Score2 Found: {}", proj1, proj2);
   
@@ -139,6 +118,16 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     _ => return Err(Box::new(MyError::RequestError(String::from("Teams Request")))),
   };
 
+  let player1_team = match get_team(&teams.body, &player1.team_id){
+    Some(t) => t,
+    None => return Err(Box::new(MyError::QueryError(String::from("Player Team 1")))),
+  };
+
+  let player2_team = match get_team(&teams.body, &player2.team_id){
+    Some(t) => t,
+    None => return Err(Box::new(MyError::QueryError(String::from("Player Team 2")))),
+  };
+
   let opp1_team = match get_team(&teams.body, opp1){
     Some(t) => t,
     None => return Err(Box::new(MyError::QueryError(String::from("Opp Team 1")))),
@@ -150,7 +139,9 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
   };
 
   let opp1_appg = get_allowed_ppg(opp1_team);
+  let team1_ppg = get_ppg(player1_team);
   let opp2_appg = get_allowed_ppg(opp2_team);
+  let team2_ppg = get_ppg(player2_team);
 
   let betting_data_1 = match request_betting(&client, &game1.game_id, &game1.game_date).await{
     Ok(d) => d,
@@ -166,30 +157,18 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     }
   };
 
-  let team1_loc = {
-    if game1.team_idaway == player1.team_id {
-      "away"
-    }
-    else {
-      "home"
-    }
-  };
+  let team1_loc = home_or_away(&game1.team_idaway, &player1.team_id);
 
-  let team2_loc = {
-    if game2.team_idaway == player2.team_id {
-      "away"
-    }
-    else {
-      "home"
-    }
-  };
+  let team2_loc = home_or_away(&game2.team_idaway, &player2.team_id);
 
-  let game1_spread = get_spread(&betting_data_1, &game1.game_id, team1_loc);
+  let game1_spread = get_spread(&betting_data_1, &game1.game_id, team1_loc.as_str());
   let ou_1 = get_over_under(&betting_data_1, &game1.game_id);
-  let game2_spread = get_spread(&betting_data_2, &game2.game_id, team2_loc);
+  let game2_spread = get_spread(&betting_data_2, &game2.game_id, team2_loc.as_str());
   let ou_2 = get_over_under(&betting_data_2, &game2.game_id);
+
+  let team1_points = get_implied_points(&ou_1.to_string(), &game1_spread.to_string());
+  let team2_points = get_implied_points(&ou_2.to_string(), &game2_spread.to_string());
   
-  //format! ("Player 1 ID: {}. Projected PPR Points: {}\nPlayer 2 ID: {}. Projected PPR Points: {}", player1.player_id, ppr_proj1, player2.player_id, ppr_proj2);
   Ok(Template::render("test2", context! {
     default_player1 : &player1.long_name,
     default_player2 :&player2.long_name,
@@ -200,12 +179,16 @@ async fn analyze (s : &Form<Input<'_>>) -> Result<Template, Box<MyError>> {
     week : s.week,
     opponent_1 : &opp1_team.team_name,
     opponent_2 : &opp2_team.team_name,
+    team1_ppg : format!("{:.2}",team1_ppg),
+    team2_ppg : format!("{:.2}",team2_ppg),
     opponent_1_appg : format!("{:.2}",opp1_appg),
     opponent_2_appg : format!("{:.2}",opp2_appg),
     game1_spread : game1_spread,
     over_under_1 : ou_1,
     game2_spread : game2_spread,
     over_under_2 : ou_2,
+    team1_points : format!("{:.2}",team1_points),
+    team2_points : format!("{:.2}",team2_points),
   }))
 }
 

@@ -3,17 +3,31 @@ use reqwest::Client;
 
 use crate::query::{REQUEST_HOST, FANTASY, API_KEY};
 
-pub fn get_standard_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
+fn get_standard_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
     return &json["body"]["playerProjections"][player_id]["fantasyPointsDefault"]["standard"];
   }
   
-pub fn get_ppr_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
+fn get_ppr_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
     return &json["body"]["playerProjections"][player_id]["fantasyPointsDefault"]["PPR"];
   }
   
-pub fn get_halfppr_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
+fn get_halfppr_projection<'a> (player_id: &'a String, json : &'a Value) -> &'a Value {
     return &json["body"]["playerProjections"][player_id]["fantasyPointsDefault"]["halfPPR"];
   }
+
+pub fn get_projection (player_id : &String, json : &Value, format : &str) -> String {
+  let mut result = 
+    match format{
+      "Standard" => get_standard_projection(player_id, json).to_string(),
+      "PPR" => get_ppr_projection(player_id, json).to_string(),
+      "Half PPR" => get_halfppr_projection(player_id, json).to_string(),
+      _ => String::from("Error"),
+    };
+  if result != String::from("null"){
+    result = result.as_str()[1..result.len()-1].to_string();
+  };
+  return result;
+}
 
 pub async fn request_fantasy (client: &Client, week: &str) -> Result<Value, Box<dyn std::error::Error>> {
     let fantasy_param = vec![("week", week)];

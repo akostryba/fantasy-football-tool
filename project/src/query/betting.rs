@@ -27,3 +27,12 @@ pub fn get_spread<'a> (json : &'a Value, game_id: &str, location : &str) -> &'a 
             _ => return &Value::Null,
       };
 }
+
+pub fn get_implied_points <'a> (over_under : &String, spread : &String) -> f32 {
+      let first = &spread.as_str()[1..2];
+      match first{
+            "+" => over_under.as_str()[1..over_under.len()-1].parse::<f32>().unwrap()/2.0 - spread.as_str()[2..spread.len()-1].parse::<f32>().unwrap()/2.0, 
+            "-" => over_under.as_str()[1..over_under.len()-1].parse::<f32>().unwrap()/2.0 + spread.as_str()[2..spread.len()-1].parse::<f32>().unwrap()/2.0, 
+            _ => -1.0
+      } 
+}

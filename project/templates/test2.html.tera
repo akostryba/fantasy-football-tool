@@ -131,19 +131,23 @@
         <p class="player-name">Player 1 ({{ player1_name }})</p>
         <div class="separator"></div>
         <p>Projected Points: {{ player1_proj }} points</p>
+        <p>Team PPG: {{team1_ppg}} points</p>
         <p>Opponent: {{ opponent_1 }}</p> 
-        <p>Opponent Allowed PPG: {{opponent_1_appg}}</p>
+        <p>Opponent Allowed PPG: {{opponent_1_appg}} points</p>
         <p>Over/Under: {{over_under_1}}</p>
         <p>Spread: {{game1_spread}}</p>
+        <p>Team Implied Points: {{team1_points}}</p>
       </div>
       <div class="column">
         <p class="player-name">Player 2 ({{ player2_name }})</p>
         <div class="separator"></div>
         <p>Projected Points: {{ player2_proj }} points</p>
+        <p>Team PPG: {{team2_ppg}} points</p>
         <p>Opponent: {{ opponent_2 }}</p> 
-        <p>Opponent Allowed PPG: {{opponent_2_appg}}</p>
+        <p>Opponent Allowed PPG: {{opponent_2_appg}} points</p>
         <p>Over/Under: {{over_under_2}}</p>
         <p>Spread: {{game2_spread}}</p>
+        <p>Team Implied Points: {{team2_points}}</p>
       </div>
     </div>
     {% endif %}
