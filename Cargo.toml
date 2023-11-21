@@ -1,2 +1,2 @@
 [workspace]
-members = ["project", "rocket_playground", "week1", "week2"]
+members = ["project"]
