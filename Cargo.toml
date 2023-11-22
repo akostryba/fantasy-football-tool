@@ -1,2 +1,2 @@
 [workspace]
-members = ["project", "rocket_workspace"]
+members = ["project", "rocket_playground"]
