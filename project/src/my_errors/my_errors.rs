@@ -13,6 +13,9 @@ pub enum MyError {
   QueryError(String),
 }
 
+//Forgot to mention in the video: 
+//I implemented the Display and Error traits from std::error and std::fmt for MyErrors by providing definitions for fmt and source functions
+
 impl Display for MyError {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     match self {
