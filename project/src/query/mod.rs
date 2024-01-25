@@ -17,5 +17,5 @@ lazy_static! {
     pub static ref FANTASY : &'static str = "/getNFLProjections?";
     pub static ref PLAYERS : &'static str = "/getNFLPlayerList";
     pub static ref TEAMS : &'static str = "/getNFLTeams";
-    pub static ref API_KEY : &'static str = "7edefd3921mshf363ed62e8f497bp1ddf5bjsnd14740483cb3";
+    pub static ref API_KEY : &'static str = "INSERT_HERE";
 }
